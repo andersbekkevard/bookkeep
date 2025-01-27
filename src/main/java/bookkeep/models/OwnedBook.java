@@ -1,23 +1,34 @@
 package bookkeep.models;
 
+import java.time.Duration;
+
 import bookkeep.enums.BookFormat;
 import bookkeep.enums.Genre;
 import bookkeep.models.states.NotStartedState;
 import bookkeep.models.states.ReadingState;
 
 public class OwnedBook extends Book {
-	// Only Owned books can have a format, thats why this field is declared here
+
 	private BookFormat format;
-	private ReadingState state = new NotStartedState();
+	private ReadingState state;
+	public int pageNumber;
+	private final BookHistory history;
 
 	public OwnedBook() {
+		this.state = new NotStartedState(this);
+		this.history = new BookHistory();
+		this.pageNumber = 0;
 	}
 
 	public OwnedBook(String authorName, int publicationYear, int pageCount, Genre genre, BookFormat format) {
 		super(authorName, publicationYear, pageCount, genre);
 		this.format = format;
+		this.state = new NotStartedState(this);
+		this.history = new BookHistory();
+		this.pageNumber = 0;
 	}
 
+	// region Getters and Setters
 	public BookFormat getFormat() {
 		return format;
 	}
@@ -26,13 +37,51 @@ public class OwnedBook extends Book {
 		this.format = format;
 	}
 
-	@Override
-	public String toString() {
-		return super.toString() + ", format=" + format;
+	// This method should not be used in any applications, only for backend
+	// Preferred method is incrementPageNumber
+	public void setPageNumber(int pageNumber) {
+		if (0 > pageNumber || pageNumber > pageCount) {
+			throw new IllegalArgumentException("Page number doesn't exist in the book");
+		}
+		this.pageNumber = pageNumber;
+	}
+
+	public int getPageNumber() {
+		return pageNumber;
 	}
 
 	public void setState(ReadingState state) {
 		this.state = state;
+	}
+
+	public ReadingState getState() {
+		return state;
+	}
+
+	public BookHistory getHistory() {
+		return history;
+	}
+
+	// endregion
+
+	public Duration getReadingDuration() {
+		return state.handleReadingDuration();
+	}
+
+	public void addComment(String comment) {
+		state.handleComment(comment);
+	}
+
+	public void addQuote(String quote, int quotePageNumber) {
+		state.handleQuote(quote, quotePageNumber);
+	}
+
+	public void review(String reviewText, int rating) {
+		state.handleReview(reviewText, rating);
+	}
+
+	public void incrementPageNumber(int increment) {
+		state.handleIncrementPageNumber(increment);
 	}
 
 }

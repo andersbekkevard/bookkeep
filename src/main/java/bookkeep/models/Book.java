@@ -1,15 +1,22 @@
 package bookkeep.models;
 
-import bookkeep.enums.EventType;
+/**
+ * Abstract class that is the foundation of all books
+ * Contains information every book must have
+ * Is concretely implemented in {@link OwnedBook} and {@link WishlistBook} 
+ */
+
 import bookkeep.enums.Genre;
 
 public abstract class Book {
-	private String authorName;
-	private int publicationYear;
-	private int pageCount;
-	private Genre genre;
-	private BookHistory history = new BookHistory();
+	protected String authorName;
+	protected int publicationYear;
+	protected int pageCount;
+	protected Genre genre;
 
+	/**
+	 * Default constructor for debugging/flexibility
+	 */
 	public Book() {
 	}
 
@@ -20,10 +27,9 @@ public abstract class Book {
 		this.genre = genre;
 	}
 
-	public void comment(String comment) {
-		BookEvent event = new BookEvent(EventType.COMMENT, comment);
-		history.addEvent(event);
-	}
+	/**
+	 * Getters and setters, Self Evident
+	 */
 
 	// region Getters and Setters
 	public String getAuthorName() {
@@ -44,10 +50,6 @@ public abstract class Book {
 
 	public int getPageCount() {
 		return pageCount;
-	}
-
-	public BookHistory getHistory() {
-		return history;
 	}
 
 	public void setPageCount(int pageCount) {

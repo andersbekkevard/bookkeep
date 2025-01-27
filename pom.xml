@@ -49,6 +49,27 @@
                     <useModulePath>true</useModulePath>
                 </configuration>
             </plugin>
+
+            <!-- Javadoc Plugin (For Documentation) -->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.5.0</version>
+                <configuration>
+                    <destDir>docs/javadoc</destDir> <!-- Store documentation outside target folder -->
+                    <show>protected</show> <!-- Include protected methods and fields -->
+                    <source>23</source> <!-- Ensure compatibility with Java 23 -->
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase> <!-- Generate Javadoc during the package phase -->
+                        <goals>
+                            <goal>javadoc</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>
