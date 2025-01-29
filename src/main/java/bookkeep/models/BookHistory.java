@@ -71,11 +71,12 @@ public class BookHistory {
 
 	// region Concrete implementations
 	public List<BookEvent> getComments() {
-		// At this stage I group afterthoughts with comments
-		List<BookEvent> combined = new ArrayList<>();
-		combined.addAll(gatherSubset(isComment));
-		combined.addAll(gatherSubset(isAfterThought));
-		return combined;
+		return gatherSubset(isComment);
+
+	}
+
+	public List<BookEvent> getAfterThoughts() {
+		return gatherSubset(isAfterThought);
 	}
 
 	public List<BookEvent> getQuotes() {

@@ -20,8 +20,9 @@ public class OwnedBook extends Book {
 		this.pageNumber = 0;
 	}
 
-	public OwnedBook(String authorName, int publicationYear, int pageCount, Genre genre, BookFormat format) {
-		super(authorName, publicationYear, pageCount, genre);
+	public OwnedBook(String title, String authorName, int publicationYear, int pageCount, Genre genre,
+			BookFormat format) {
+		super(title, authorName, publicationYear, pageCount, genre);
 		this.format = format;
 		this.state = new NotStartedState(this);
 		this.history = new BookHistory();

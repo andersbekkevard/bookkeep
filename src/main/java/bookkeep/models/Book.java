@@ -1,18 +1,16 @@
 package bookkeep.models;
 
-/**
- * Abstract class that is the foundation of all books
- * Contains information every book must have
- * Is concretely implemented in {@link OwnedBook} and {@link WishlistBook} 
- */
+import java.util.UUID;
 
 import bookkeep.enums.Genre;
 
 public abstract class Book {
+	protected String title;
 	protected String authorName;
 	protected int publicationYear;
 	protected int pageCount;
 	protected Genre genre;
+	protected UUID id;
 
 	/**
 	 * Default constructor for debugging/flexibility
@@ -20,11 +18,13 @@ public abstract class Book {
 	public Book() {
 	}
 
-	public Book(String authorName, int publicationYear, int pageCount, Genre genre) {
+	public Book(String title, String authorName, int publicationYear, int pageCount, Genre genre) {
+		this.title = title;
 		this.authorName = authorName;
 		this.publicationYear = publicationYear;
 		this.pageCount = pageCount;
 		this.genre = genre;
+		this.id = UUID.randomUUID();
 	}
 
 	/**
@@ -32,6 +32,10 @@ public abstract class Book {
 	 */
 
 	// region Getters and Setters
+	public String getTitle() {
+		return title;
+	}
+
 	public String getAuthorName() {
 		return authorName;
 	}
@@ -63,6 +67,11 @@ public abstract class Book {
 	public void setGenre(Genre genre) {
 		this.genre = genre;
 	}
+
+	public UUID getUUID() {
+		return id;
+	}
+
 	// endregion
 
 	@Override
