@@ -1,10 +1,11 @@
 package bookkeep.models.states;
 
+import java.io.Serializable;
 import java.time.Duration;
 
 import bookkeep.models.OwnedBook;
 
-public abstract class ReadingState {
+public abstract class ReadingState implements Serializable {
 
 	protected OwnedBook book;
 

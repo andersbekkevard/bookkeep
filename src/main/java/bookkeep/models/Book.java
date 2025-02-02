@@ -1,10 +1,11 @@
 package bookkeep.models;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 import bookkeep.enums.Genre;
 
-public abstract class Book {
+public abstract class Book implements Serializable {
 	protected String title;
 	protected String authorName;
 	protected int publicationYear;

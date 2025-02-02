@@ -1,5 +1,6 @@
 package bookkeep.models;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 
@@ -27,7 +28,7 @@ import bookkeep.enums.EventType;
  *                   Used only for REVIEW.
  */
 
-public class BookEvent {
+public class BookEvent implements Serializable {
 
 	private Instant timestamp;
 	private EventType type;

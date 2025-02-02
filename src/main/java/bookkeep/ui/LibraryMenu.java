@@ -1,0 +1,475 @@
+package bookkeep.ui;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import bookkeep.enums.BookFormat;
+import bookkeep.enums.Genre;
+import bookkeep.models.Book;
+import bookkeep.models.BookBuilder;
+import bookkeep.models.OwnedBook;
+import bookkeep.models.collections.BookStorage;
+import bookkeep.persistance.LibrarySerializer;
+
+public class LibraryMenu {
+
+	/* ================================ CONSTANTS =============================== */
+	private static final String RETURN_LABEL = "Return";
+	private static final String EXIT_LABEL = "Exit";
+	private static final String PRESS_ENTER_MSG = "Press enter to continue...";
+	private static final String NO_BOOKS_MSG = "No books available.";
+	private static final String NO_SHELVES_MSG = "No shelves available. Please add a shelf first.";
+	private static final String LIBRARY_PERSISTENCE_HEADER = "===== Library Persistence =====";
+
+	/* ================================= FIELDS ================================= */
+	// Note: removed final from bookStorage so it can be updated on load.
+	private BookStorage bookStorage;
+	private final Scanner scanner;
+
+	/* =============================== CONSTRUCTOR ============================== */
+	public LibraryMenu(BookStorage bookStorage) {
+		this.bookStorage = bookStorage;
+		scanner = new Scanner(System.in);
+	}
+
+	/* ========================= GENERAL HELPER METHODS ========================= */
+	/**
+	 * Clears the terminal screen using ANSI escape codes.
+	 */
+	private void clearScreen() {
+		System.out.print("\033[H\033[2J");
+		System.out.flush();
+	}
+
+	/**
+	 * Prompts the user to press Enter to continue.
+	 */
+	private void pressEnterToContinue() {
+		System.out.println(PRESS_ENTER_MSG);
+		scanner.nextLine();
+	}
+
+	/**
+	 * Prompts the user for a numeric choice between min and max (inclusive).
+	 */
+	private int getChoice(int min, int max) {
+		while (true) {
+			System.out.print("Enter choice (" + min + "-" + max + "): ");
+			String input = scanner.nextLine();
+			try {
+				int choice = Integer.parseInt(input);
+				if (choice >= min && choice <= max) {
+					return choice;
+				} else {
+					System.out.println("Invalid choice. Please enter a number between " + min + " and " + max + ".");
+				}
+			} catch (NumberFormatException e) {
+				System.out.println("Invalid input. Please enter a number.");
+			}
+		}
+	}
+
+	/**
+	 * Displays a menu with the given header and list of options.
+	 * Option 0 is always reserved for the provided returnLabel.
+	 *
+	 * @param header      The header text to display.
+	 * @param options     A list of options.
+	 * @param returnLabel The label for option 0.
+	 * @return The user's numeric selection.
+	 */
+	private int selectOption(String header, List<String> options, String returnLabel) {
+		clearScreen();
+		System.out.println(header);
+		for (int i = 0; i < options.size(); i++) {
+			System.out.println((i + 1) + ". " + options.get(i));
+		}
+		System.out.println("0. " + returnLabel);
+		return getChoice(0, options.size());
+	}
+
+	/**
+	 * Displays a list of books (with a header) and allows the user to select one to
+	 * view its details.
+	 * If the list is empty, a message is displayed.
+	 *
+	 * @param header The header text.
+	 * @param books  The list of books to display.
+	 */
+	private void listBooksAndSelect(String header, List<Book> books) {
+		clearScreen();
+		System.out.println(header);
+		if (books.isEmpty()) {
+			System.out.println(NO_BOOKS_MSG);
+			pressEnterToContinue();
+			return;
+		}
+		for (int i = 0; i < books.size(); i++) {
+			Book book = books.get(i);
+			System.out.println((i + 1) + ". " + book.getTitle() + " by " + book.getAuthorName() + " ("
+					+ book.getPublicationYear() + ")");
+		}
+		System.out.println("0. " + RETURN_LABEL);
+		int choice = getChoice(0, books.size());
+		if (choice != 0) {
+			displayBookDetails(books.get(choice - 1));
+			pressEnterToContinue();
+		}
+	}
+
+	/**
+	 * Displays a list of books (with a header) for selection without immediately
+	 * showing details. Returns the user's selection index (1-indexed) or 0 if
+	 * returning.
+	 *
+	 * @param header The header text.
+	 * @param books  The list of books.
+	 * @return The selected index, or 0.
+	 */
+	private int selectBook(String header, List<Book> books) {
+		clearScreen();
+		System.out.println(header);
+		if (books.isEmpty()) {
+			System.out.println(NO_BOOKS_MSG);
+			pressEnterToContinue();
+			return 0;
+		}
+		for (int i = 0; i < books.size(); i++) {
+			Book book = books.get(i);
+			System.out.println((i + 1) + ". " + book.getTitle() + " by " + book.getAuthorName());
+		}
+		System.out.println("0. " + RETURN_LABEL);
+		return getChoice(0, books.size());
+	}
+
+	/* ================================ MAIN MENU =============================== */
+	public void start() {
+		boolean running = true;
+		List<String> mainOptions = new ArrayList<>();
+		mainOptions.add("Books Features");
+		mainOptions.add("Shelf Management");
+		mainOptions.add("Add New Book to Library");
+		mainOptions.add("Library Persistence");
+
+		while (running) {
+			int choice = selectOption("===== Library Main Menu =====", mainOptions, EXIT_LABEL);
+			switch (choice) {
+				case 1 -> booksFeaturesMenu();
+				case 2 -> shelfManagementMenu();
+				case 3 -> addNewBook();
+				case 4 -> libraryPersistenceMenu();
+				case 0 -> {
+					running = false;
+					System.out.println("Exiting application. Goodbye!");
+					pressEnterToContinue();
+				}
+			}
+		}
+		scanner.close();
+	}
+
+	/* =========================== BOOKS FEATURES MENU ========================== */
+	private void booksFeaturesMenu() {
+		boolean inBooksMenu = true;
+		List<String> options = new ArrayList<>();
+		options.add("Show All Books");
+		options.add("Show Books by Author");
+		options.add("Show Books by Publication Year");
+		options.add("Show Books by Year Interval");
+
+		while (inBooksMenu) {
+			int choice = selectOption("===== Books Features Menu =====", options, "Return to Main Menu");
+			switch (choice) {
+				case 1 -> listBooksAndSelect("--- All Books in Library ---", bookStorage.getAllBooks());
+				case 2 -> showBooksByAuthor();
+				case 3 -> showBooksByYear();
+				case 4 -> showBooksByYearInterval();
+				case 0 -> inBooksMenu = false;
+			}
+		}
+	}
+
+	private void showBooksByAuthor() {
+		clearScreen();
+		System.out.print("Enter author name: ");
+		String author = scanner.nextLine();
+		List<Book> books = bookStorage.getBooksByAuthor(author);
+		listBooksAndSelect("Books by " + author + ":", books);
+	}
+
+	private void showBooksByYear() {
+		clearScreen();
+		System.out.print("Enter publication year: ");
+		try {
+			int year = Integer.parseInt(scanner.nextLine());
+			List<Book> books = bookStorage.getBooksByYear(year);
+			listBooksAndSelect("Books published in " + year + ":", books);
+		} catch (NumberFormatException e) {
+			System.out.println("Invalid year entered.");
+			pressEnterToContinue();
+		}
+	}
+
+	private void showBooksByYearInterval() {
+		clearScreen();
+		try {
+			System.out.print("Enter start year: ");
+			int startYear = Integer.parseInt(scanner.nextLine());
+			System.out.print("Enter end year: ");
+			int endYear = Integer.parseInt(scanner.nextLine());
+			List<Book> books = bookStorage.getBooksByYearInterval(startYear, endYear);
+			listBooksAndSelect("Books published between " + startYear + " and " + endYear + ":", books);
+		} catch (NumberFormatException e) {
+			System.out.println("Invalid year(s) entered.");
+			pressEnterToContinue();
+		}
+	}
+
+	/* ========================== SHELF MANAGEMENT MENU ========================= */
+	private void shelfManagementMenu() {
+		boolean inShelfMenu = true;
+		List<String> options = new ArrayList<>();
+		options.add("Select a Shelf");
+		options.add("Add Shelf");
+
+		while (inShelfMenu) {
+			int choice = selectOption("===== Shelf Management Menu =====", options, "Return to Main Menu");
+			switch (choice) {
+				case 1 -> selectShelf();
+				case 2 -> addShelf();
+				case 0 -> inShelfMenu = false;
+			}
+		}
+	}
+
+	private void selectShelf() {
+		List<String> shelves = bookStorage.getShelfNames();
+		if (shelves.isEmpty()) {
+			clearScreen();
+			System.out.println(NO_SHELVES_MSG);
+			pressEnterToContinue();
+			return;
+		}
+		int choice = selectOption("Select a shelf:", shelves, "Return to Shelf Management Menu");
+		if (choice == 0) {
+			return;
+		}
+		String selectedShelf = shelves.get(choice - 1);
+		shelfSubMenu(selectedShelf);
+	}
+
+	private void shelfSubMenu(String shelfName) {
+		boolean inSubMenu = true;
+		List<String> options = new ArrayList<>();
+		options.add("Add Book to Shelf");
+		options.add("Remove Book from Shelf");
+		options.add("Delete this Shelf");
+		options.add("View Books in Shelf");
+
+		while (inSubMenu) {
+			int choice = selectOption("=== Shelf: " + shelfName + " ===", options, "Return to Shelf Management Menu");
+			switch (choice) {
+				case 1 -> addBookToShelf(shelfName);
+				case 2 -> removeBookFromShelf(shelfName);
+				case 3 -> {
+					bookStorage.removeShelf(shelfName);
+					System.out.println("Shelf '" + shelfName + "' deleted.");
+					pressEnterToContinue();
+					inSubMenu = false;
+				}
+				case 4 -> viewBooksInShelf(shelfName);
+				case 0 -> inSubMenu = false;
+			}
+		}
+	}
+
+	private void addShelf() {
+		clearScreen();
+		System.out.print("Enter new shelf name: ");
+		String shelfName = scanner.nextLine();
+		bookStorage.addShelf(shelfName);
+		System.out.println("Shelf added: " + shelfName);
+		pressEnterToContinue();
+	}
+
+	/**
+	 * Returns a list of books in the library that are not already in the specified
+	 * shelf.
+	 */
+	private List<Book> getBooksNotInShelf(String shelfName) {
+		List<Book> allBooks = bookStorage.getAllBooks();
+		List<Book> shelfBooks = bookStorage.getBooksFromShelfName(shelfName);
+		Set<String> shelfUUIDs = shelfBooks.stream()
+				.map(book -> book.getUUID().toString())
+				.collect(Collectors.toSet());
+		return allBooks.stream()
+				.filter(book -> !shelfUUIDs.contains(book.getUUID().toString()))
+				.collect(Collectors.toList());
+	}
+
+	private void addBookToShelf(String shelfName) {
+		List<Book> availableBooks = getBooksNotInShelf(shelfName);
+		int choice = selectBook("Select a book to add to shelf '" + shelfName + "':", availableBooks);
+		if (choice == 0) {
+			return;
+		}
+		Book selectedBook = availableBooks.get(choice - 1);
+		bookStorage.addBookToShelf(shelfName, selectedBook);
+		System.out.println("Book '" + selectedBook.getTitle() + "' added to shelf '" + shelfName + "'.");
+		pressEnterToContinue();
+	}
+
+	private void removeBookFromShelf(String shelfName) {
+		List<Book> shelfBooks = bookStorage.getBooksFromShelfName(shelfName);
+		int choice = selectBook("Select a book to remove from shelf '" + shelfName + "':", shelfBooks);
+		if (choice == 0) {
+			return;
+		}
+		Book selectedBook = shelfBooks.get(choice - 1);
+		bookStorage.removeBookFromShelf(shelfName, selectedBook);
+		System.out.println("Book '" + selectedBook.getTitle() + "' removed from shelf '" + shelfName + "'.");
+		pressEnterToContinue();
+	}
+
+	private void viewBooksInShelf(String shelfName) {
+		List<Book> shelfBooks = bookStorage.getBooksFromShelfName(shelfName);
+		listBooksAndSelect("Books in shelf '" + shelfName + "':", shelfBooks);
+	}
+
+	/* ======================== LIBRARY PERSISTENCE MENU ======================== */
+	private void libraryPersistenceMenu() {
+		LibrarySerializer serializer = new LibrarySerializer();
+		List<String> options = new ArrayList<>();
+		options.add("Save Library");
+		options.add("Load Library");
+
+		boolean inPersistenceMenu = true;
+		while (inPersistenceMenu) {
+			int choice = selectOption(LIBRARY_PERSISTENCE_HEADER, options, "Return to Main Menu");
+			switch (choice) {
+				case 1 -> {
+					try {
+						serializer.save(bookStorage);
+						System.out.println("Library saved successfully.");
+					} catch (IOException e) {
+						System.out.println("Error saving library: " + e.getMessage());
+					}
+					pressEnterToContinue();
+				}
+				case 2 -> {
+					bookStorage = serializer.load();
+					System.out.println("Library loaded successfully.");
+					pressEnterToContinue();
+				}
+				case 0 -> inPersistenceMenu = false;
+			}
+		}
+	}
+
+	/* ============================== ADD NEW BOOK ============================== */
+	private void addNewBook() {
+		clearScreen();
+		System.out.println("--- Add New Book ---");
+		System.out.print("Title: ");
+		String title = scanner.nextLine();
+		System.out.print("Author: ");
+		String author = scanner.nextLine();
+		int year;
+		try {
+			System.out.print("Publication Year: ");
+			year = Integer.parseInt(scanner.nextLine());
+		} catch (NumberFormatException e) {
+			System.out.println("Invalid year input. Book not added.");
+			pressEnterToContinue();
+			return;
+		}
+		int pageCount;
+		try {
+			System.out.print("Page Count: ");
+			pageCount = Integer.parseInt(scanner.nextLine());
+		} catch (NumberFormatException e) {
+			System.out.println("Invalid page count. Book not added.");
+			pressEnterToContinue();
+			return;
+		}
+		System.out.print("Genre (e.g., FICTION, FANTASY): ");
+		String genreInput = scanner.nextLine();
+		Genre genre;
+		try {
+			genre = Genre.valueOf(genreInput.toUpperCase());
+		} catch (IllegalArgumentException e) {
+			System.out.println("Invalid genre input. Defaulting to FICTION.");
+			genre = Genre.FICTION;
+		}
+		System.out.print("Format (DIGITAL/PHYSICAL): ");
+		String formatInput = scanner.nextLine();
+		BookFormat format;
+		try {
+			format = BookFormat.valueOf(formatInput.toUpperCase());
+		} catch (IllegalArgumentException e) {
+			System.out.println("Invalid format input. Defaulting to PHYSICAL.");
+			format = BookFormat.PHYSICAL;
+		}
+		BookBuilder builder = new BookBuilder();
+		OwnedBook newBook = builder.withTitle(title)
+				.withAuthorName(author)
+				.withPublicationYear(year)
+				.withPageCount(pageCount)
+				.withGenre(genre)
+				.withFormat(format)
+				.buildOwnedBook();
+		bookStorage.addBook(newBook);
+		System.out.println("New book '" + title + "' added to library.");
+
+		List<String> shelves = bookStorage.getShelfNames();
+		if (!shelves.isEmpty()) {
+			int choice = selectOption("Select a shelf to add the book to:", shelves, "Skip adding to shelf");
+			if (choice == 0) {
+				System.out.println("Book remains in library only.");
+			} else {
+				String selectedShelf = shelves.get(choice - 1);
+				bookStorage.addBookToShelf(selectedShelf, newBook);
+				System.out.println("Book added to shelf '" + selectedShelf + "'.");
+			}
+			pressEnterToContinue();
+		} else {
+			System.out.println("No shelves available.");
+			List<String> options = new ArrayList<>();
+			options.add("Create new shelf for this book");
+			int choice = selectOption("Options:", options, "Skip adding to shelf");
+			if (choice == 1) {
+				System.out.print("Enter new shelf name: ");
+				String newShelfName = scanner.nextLine();
+				bookStorage.addShelf(newShelfName);
+				bookStorage.addBookToShelf(newShelfName, newBook);
+				System.out.println("Book added to new shelf '" + newShelfName + "'.");
+			} else {
+				System.out.println("Book remains in library only.");
+			}
+			pressEnterToContinue();
+		}
+	}
+
+	/* ========================== DISPLAY BOOK DETAILS ========================== */
+	// (Additional functionality such as adding quotes or changing reading state can
+	// be implemented here.)
+	private void displayBookDetails(Book book) {
+		clearScreen();
+		System.out.println("===== Book Details =====");
+		System.out.println("Title: " + book.getTitle());
+		System.out.println("Author: " + book.getAuthorName());
+		System.out.println("Publication Year: " + book.getPublicationYear());
+		System.out.println("Page Count: " + book.getPageCount());
+		System.out.println("Genre: " + book.getGenre());
+		if (book instanceof OwnedBook) {
+			OwnedBook owned = (OwnedBook) book;
+			System.out.println("Format: " + owned.getFormat());
+			System.out.println("Current Page: " + owned.getPageNumber());
+		}
+		System.out.println("========================");
+	}
+}

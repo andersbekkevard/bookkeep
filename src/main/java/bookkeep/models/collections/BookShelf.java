@@ -1,14 +1,15 @@
 package bookkeep.models.collections;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class BookCollection {
+public class BookShelf implements Serializable {
 	private String name;
 	private final List<UUID> bookUUIDs;
 
-	public BookCollection(String name) {
+	public BookShelf(String name) {
 		this.name = name;
 		bookUUIDs = new ArrayList<>();
 	}

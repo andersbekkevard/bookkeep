@@ -8,8 +8,8 @@ public class WishlistBook extends Book {
 	public WishlistBook() {
 	}
 
-	public WishlistBook(String authorName, int publicationYear, int pageCount, Genre genre, int price) {
-		super(authorName, publicationYear, pageCount, genre);
+	public WishlistBook(String title, String authorName, int publicationYear, int pageCount, Genre genre, int price) {
+		super(title, authorName, publicationYear, pageCount, genre);
 		this.price = price;
 	}
 

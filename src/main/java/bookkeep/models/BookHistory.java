@@ -1,5 +1,6 @@
 package bookkeep.models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -9,7 +10,7 @@ import java.util.stream.Collectors;
 
 import bookkeep.enums.EventType;
 
-public class BookHistory {
+public class BookHistory implements Serializable {
 	private final List<BookEvent> listOfEvents;
 	private BookEvent startedReading;
 	private BookEvent finishedReading;
