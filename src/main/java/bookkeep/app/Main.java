@@ -7,7 +7,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		BookStorage library = new BookStorage();
-		// library.makeDummyLibrary();
+		library.makeDummyLibrary();
 		LibraryMenu menu = new LibraryMenu(library);
 		menu.start();
 	}

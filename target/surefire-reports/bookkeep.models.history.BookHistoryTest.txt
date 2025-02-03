@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: bookkeep.models.history.BookHistoryTest
 -------------------------------------------------------------------------------
-Tests run: 13, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.182 s - in bookkeep.models.history.BookHistoryTest
+Tests run: 13, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.114 s - in bookkeep.models.history.BookHistoryTest

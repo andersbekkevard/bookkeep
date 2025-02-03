@@ -1,6 +1,8 @@
 package bookkeep.models.history;
 
 import java.io.Serializable;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -83,6 +85,34 @@ public class BookHistory implements Serializable {
 	public List<BookEvent> getQuotes() {
 		return gatherSubset(isQuote);
 	}
+
+	/*
+	 * Similar logic exists in State classes inside the Book itself.
+	 * At this point I haven't decided where it should land
+	 * But for the menus it makes more sense to have access to this
+	 * From the history-object
+	 */
+	public Duration getReadingDuration() {
+		//
+		if (startedReading == null) {
+			// The book isn't started
+			throw new IllegalCallerException("Has not started reading yet");
+		}
+		if (finishedReading == null) {
+			// The book is in progress
+			Instant timeOfStartedReading = startedReading.getTimestamp();
+			return Duration.between(timeOfStartedReading, Instant.now());
+		}
+
+		else {
+			// The book is finished
+			Instant timeOfStartedReading = startedReading.getTimestamp();
+			Instant timeOfFinishedReading = finishedReading.getTimestamp();
+
+			return Duration.between(timeOfStartedReading, timeOfFinishedReading);
+		}
+	}
+
 	// endregion
 
 	public void addEvent(BookEvent event) {
@@ -92,7 +122,7 @@ public class BookHistory implements Serializable {
 		}
 
 		/**
-		 * Since the states only allow for one state transition, hence only one
+		 * Since the states only allow for one state transition, giving only one
 		 * STARTED_READING and FINISHED_READING event each, i can simply hard code
 		 * the logic in this way. This might cause issues down the road, or need
 		 * refactoring, but for now it is worth it to avoid overabstraction

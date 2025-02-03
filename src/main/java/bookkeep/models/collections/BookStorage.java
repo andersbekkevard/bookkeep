@@ -20,10 +20,19 @@ public class BookStorage implements Serializable {
 	private final Map<UUID, Book> bookRepository;
 	private final List<BookShelf> bookShelves;
 
-	private static final BiPredicate<Book, Object> filterByAuthor = (book, author) -> book.getAuthorName()
-			.equals(author);
+	private static final BiPredicate<Book, Object> filterByAuthor = (book, author) -> {
+		if (author instanceof String string) {
+			return book.getAuthorName().toLowerCase().contains(string.toLowerCase());
+		}
+		return false;
+	};
 
-	private static final BiPredicate<Book, Object> filterByTitle = (book, title) -> book.getTitle().equals(title);
+	private static final BiPredicate<Book, Object> filterByTitle = (book, title) -> {
+		if (title instanceof String) {
+			return book.getTitle().toLowerCase().contains(((String) title).toLowerCase());
+		}
+		return false;
+	};
 
 	private static final BiPredicate<Book, Object> filterByPublicationYear = (book, year) -> Integer
 			.valueOf(book.getPublicationYear()).equals(year);

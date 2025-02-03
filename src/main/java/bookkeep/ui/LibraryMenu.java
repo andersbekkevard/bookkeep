@@ -13,6 +13,8 @@ import bookkeep.models.Book;
 import bookkeep.models.BookBuilder;
 import bookkeep.models.OwnedBook;
 import bookkeep.models.collections.BookStorage;
+import bookkeep.models.history.BookEvent;
+import bookkeep.models.history.BookHistory;
 import bookkeep.persistance.LibrarySerializer;
 
 public class LibraryMenu {
@@ -106,23 +108,26 @@ public class LibraryMenu {
 	 * @param books  The list of books to display.
 	 */
 	private void listBooksAndSelect(String header, List<Book> books) {
-		clearScreen();
-		System.out.println(header);
-		if (books.isEmpty()) {
-			System.out.println(NO_BOOKS_MSG);
-			pressEnterToContinue();
-			return;
-		}
-		for (int i = 0; i < books.size(); i++) {
-			Book book = books.get(i);
-			System.out.println((i + 1) + ". " + book.getTitle() + " by " + book.getAuthorName() + " ("
-					+ book.getPublicationYear() + ")");
-		}
-		System.out.println("0. " + RETURN_LABEL);
-		int choice = getChoice(0, books.size());
-		if (choice != 0) {
-			displayBookDetails(books.get(choice - 1));
-			pressEnterToContinue();
+		boolean inListBooksAndSelectMenu = true;
+		while (inListBooksAndSelectMenu) {
+			clearScreen();
+			System.out.println(header);
+			if (books.isEmpty()) {
+				System.out.println(NO_BOOKS_MSG);
+				pressEnterToContinue();
+				return;
+			}
+			for (int i = 0; i < books.size(); i++) {
+				Book book = books.get(i);
+				System.out.println((i + 1) + ". " + book.getTitle() + " by " + book.getAuthorName() + " ("
+						+ book.getPublicationYear() + ")");
+			}
+			System.out.println("0. " + RETURN_LABEL);
+			int choice = getChoice(0, books.size());
+			if (choice != 0) {
+				bookMenu(books.get(choice - 1));
+			} else
+				inListBooksAndSelectMenu = false;
 		}
 	}
 
@@ -486,12 +491,31 @@ public class LibraryMenu {
 		System.out.println("Book added to new shelf '" + newShelfName + "'.");
 	}
 
+	/* ================================ BOOK MENU =============================== */
+	private void bookMenu(Book book) {
+		clearScreen();
+		List<String> options = new ArrayList<>();
+		options.add("View details");
+		options.add("History");
+		options.add("Interact");
+
+		boolean inBookMenu = true;
+		while (inBookMenu) {
+			int choice = selectOption("===== Book Menu =====", options, RETURN_LABEL);
+			switch (choice) {
+				case 1 -> displayBookDetails(book);
+				case 2 -> displayBookHistory(book);
+				case 3 -> interactWithBook(book);
+				case 0 -> {
+					inBookMenu = false;
+				}
+			}
+		}
+	}
+
 	/* ========================== DISPLAY BOOK DETAILS ========================== */
-	// (Additional functionality such as adding quotes or changing reading state can
-	// be implemented here.)
 	private void displayBookDetails(Book book) {
 		clearScreen();
-		System.out.println("===== Book Details =====");
 		System.out.println("Title: " + book.getTitle());
 		System.out.println("Author: " + book.getAuthorName());
 		System.out.println("Publication Year: " + book.getPublicationYear());
@@ -502,6 +526,73 @@ public class LibraryMenu {
 			System.out.println("Format: " + owned.getFormat());
 			System.out.println("Current Page: " + owned.getPageNumber());
 		}
-		System.out.println("========================");
+		pressEnterToContinue();
 	}
+
+	/* ========================== DISPLAY BOOK HISTORY ========================== */
+	private void displayBookHistory(Book book) {
+		clearScreen();
+		if (!(book instanceof OwnedBook)) {
+			System.out.println("No History for Books that are not Owned:");
+			return;
+		}
+		BookHistory history = book.getHistory();
+		System.out.println("History:");
+		System.out.println("Started Reading: " + history.getStartedReading());
+		System.out.println("Finished Reading: " + history.getFinishedReading());
+		System.out.println("Reading Duration: " + history.getReadingDuration());
+		for (BookEvent event : history.getListOfEvents()) {
+			System.out.println(event);
+		}
+		System.out.println("Review: " + history.getReview());
+
+		pressEnterToContinue();
+	}
+
+	/* =========================== INTERACT WITH BOOK =========================== */
+	/*
+	 * The logic for interacting with a book is tightly coupled with the book class
+	 * itself, and with its states.
+	 * This is why I try to handle most if the interaction internally in the book,
+	 * and not here in the LibraryMenu class
+	 */
+	private void interactWithBook(Book book) {
+		clearScreen();
+		// if (!(book instanceof OwnedBook)) {
+		// System.out.println("Can only interact with owned books at this point");
+		// pressEnterToContinue();
+		// return;
+		// }
+		// // The rest of the method we can assume the book is an OwnedBook
+		// List<String> options = new ArrayList<>();
+		// options.add("Change state");
+		// options.add("Increment pagenumber");
+		// options.add("Comment");
+		// options.add("Quote");
+		// options.add("Review");
+
+		// boolean inInteractWithBookMenu = true;
+		// while (inInteractWithBookMenu) {
+		// int choice = selectOption("===== Book Menu =====", options, RETURN_LABEL);
+		// switch (choice) {
+		// case 1 -> changeState(Book book);
+		// case 2 -> displayBookHistory(book);
+		// case 3 -> interactWithBook(book);
+		// case 4 -> interactWithBook(book);
+		// case 5 -> interactWithBook(book);
+		// case 0 -> {
+		// inInteractWithBookMenu = false;
+		// }
+		// }
+		// }
+
+		pressEnterToContinue();
+	}
+
+	// public void changeState(Book book){
+	// try {
+	// book.
+	// } catch (Exception e) {
+	// }
+	// }
 }

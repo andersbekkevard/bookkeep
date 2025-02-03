@@ -1,6 +1,7 @@
 package bookkeep.models;
 
 import bookkeep.enums.Genre;
+import bookkeep.models.history.BookHistory;
 
 public class WishlistBook extends Book {
 	private int price;
@@ -24,6 +25,35 @@ public class WishlistBook extends Book {
 	@Override
 	public String toString() {
 		return super.toString() + ", price=" + price;
+	}
+
+	@Override
+	public BookHistory getHistory() {
+		throw new UnsupportedOperationException("Can not get history of WishlistBook");
+	}
+
+	@Override
+	public void addComment(String comment) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'addComment'");
+	}
+
+	@Override
+	public void addQuote(String quote, int quotePageNumber) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'addQuote'");
+	}
+
+	@Override
+	public void review(String reviewText, int rating) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'review'");
+	}
+
+	@Override
+	public void incrementPageNumber(int increment) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'incrementPageNumber'");
 	}
 
 }

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.UUID;
 
 import bookkeep.enums.Genre;
+import bookkeep.models.history.BookHistory;
 
 public abstract class Book implements Serializable {
 	protected String title;
@@ -27,6 +28,16 @@ public abstract class Book implements Serializable {
 		this.genre = genre;
 		this.id = UUID.randomUUID();
 	}
+
+	public abstract BookHistory getHistory();
+
+	public abstract void addComment(String comment);
+
+	public abstract void addQuote(String quote, int quotePageNumber);
+
+	public abstract void review(String reviewText, int rating);
+
+	public abstract void incrementPageNumber(int increment);
 
 	/**
 	 * Getters and setters, Self Evident
