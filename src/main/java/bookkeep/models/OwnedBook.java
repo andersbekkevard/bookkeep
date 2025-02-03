@@ -4,6 +4,7 @@ import java.time.Duration;
 
 import bookkeep.enums.BookFormat;
 import bookkeep.enums.Genre;
+import bookkeep.models.history.BookHistory;
 import bookkeep.models.states.NotStartedState;
 import bookkeep.models.states.ReadingState;
 

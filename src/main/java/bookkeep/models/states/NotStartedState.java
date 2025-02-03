@@ -3,8 +3,8 @@ package bookkeep.models.states;
 import java.time.Duration;
 
 import bookkeep.enums.EventType;
-import bookkeep.models.BookEvent;
 import bookkeep.models.OwnedBook;
+import bookkeep.models.history.BookEvent;
 
 public class NotStartedState extends ReadingState {
 

@@ -1,4 +1,4 @@
-package bookkeep.models;
+package bookkeep.models.history;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package bookkeep.models;
+package bookkeep.models.history;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -64,7 +64,7 @@ public class BookEvent implements Serializable {
 		this.type = type;
 		this.text = text;
 
-		// The number can be intended as either a pageNumber or a rating
+		// The number might be intended as either a pageNumber or a rating
 		if (type != EventType.REVIEW) {
 			this.pageNumber = number;
 			return;

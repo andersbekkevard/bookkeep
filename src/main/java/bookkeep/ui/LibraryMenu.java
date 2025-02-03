@@ -29,11 +29,16 @@ public class LibraryMenu {
 	// Note: removed final from bookStorage so it can be updated on load.
 	private BookStorage bookStorage;
 	private final Scanner scanner;
+	private boolean isTestMenu = false;
 
 	/* =============================== CONSTRUCTOR ============================== */
 	public LibraryMenu(BookStorage bookStorage) {
 		this.bookStorage = bookStorage;
 		scanner = new Scanner(System.in);
+	}
+
+	public void makeTestMenu() {
+		isTestMenu = true;
 	}
 
 	/* ========================= GENERAL HELPER METHODS ========================= */
@@ -343,6 +348,10 @@ public class LibraryMenu {
 	/* ======================== LIBRARY PERSISTENCE MENU ======================== */
 	private void libraryPersistenceMenu() {
 		LibrarySerializer serializer = new LibrarySerializer();
+		if (isTestMenu) {
+			serializer.makeTestSerializer();
+		}
+
 		List<String> options = new ArrayList<>();
 		options.add("Save Library");
 		options.add("Load Library");
@@ -374,10 +383,13 @@ public class LibraryMenu {
 	private void addNewBook() {
 		clearScreen();
 		System.out.println("--- Add New Book ---");
+
 		System.out.print("Title: ");
 		String title = scanner.nextLine();
+
 		System.out.print("Author: ");
 		String author = scanner.nextLine();
+
 		int year;
 		try {
 			System.out.print("Publication Year: ");
@@ -387,6 +399,7 @@ public class LibraryMenu {
 			pressEnterToContinue();
 			return;
 		}
+
 		int pageCount;
 		try {
 			System.out.print("Page Count: ");
@@ -396,6 +409,7 @@ public class LibraryMenu {
 			pressEnterToContinue();
 			return;
 		}
+
 		System.out.print("Genre (e.g., FICTION, FANTASY): ");
 		String genreInput = scanner.nextLine();
 		Genre genre;
@@ -405,6 +419,7 @@ public class LibraryMenu {
 			System.out.println("Invalid genre input. Defaulting to FICTION.");
 			genre = Genre.FICTION;
 		}
+
 		System.out.print("Format (DIGITAL/PHYSICAL): ");
 		String formatInput = scanner.nextLine();
 		BookFormat format;
@@ -414,6 +429,7 @@ public class LibraryMenu {
 			System.out.println("Invalid format input. Defaulting to PHYSICAL.");
 			format = BookFormat.PHYSICAL;
 		}
+
 		BookBuilder builder = new BookBuilder();
 		OwnedBook newBook = builder.withTitle(title)
 				.withAuthorName(author)
@@ -425,33 +441,49 @@ public class LibraryMenu {
 		bookStorage.addBook(newBook);
 		System.out.println("New book '" + title + "' added to library.");
 
+		// Delegate the shelf selection logic to a helper method.
+		processShelfSelectionForBook(newBook);
+	}
+
+	/**
+	 * Helper function to processes the user's choice to add the new book to a
+	 * shelf. Offers the option to choose one of the existing shelves or to create a
+	 * new shelf. If the user chooses to skip, no shelf is used.
+	 */
+	private void processShelfSelectionForBook(Book newBook) {
+		// Retrieve existing shelves.
 		List<String> shelves = bookStorage.getShelfNames();
-		if (!shelves.isEmpty()) {
-			int choice = selectOption("Select a shelf to add the book to:", shelves, "Skip adding to shelf");
-			if (choice == 0) {
-				System.out.println("Book remains in library only.");
-			} else {
-				String selectedShelf = shelves.get(choice - 1);
-				bookStorage.addBookToShelf(selectedShelf, newBook);
-				System.out.println("Book added to shelf '" + selectedShelf + "'.");
-			}
-			pressEnterToContinue();
+
+		// Build the options list: existing shelves plus an extra option to create a new
+		// shelf.
+		List<String> options = new ArrayList<>(shelves);
+		options.add("Create new shelf");
+
+		int choice = selectOption("Select a shelf to add the book to:", options, "Skip adding to shelf");
+
+		if (choice == 0) {
+			System.out.println("Book remains in library only.");
+		} else if (choice == options.size()) { // User selected the last option: "Create new shelf"
+			createShelfAndAddBook(newBook);
 		} else {
-			System.out.println("No shelves available.");
-			List<String> options = new ArrayList<>();
-			options.add("Create new shelf for this book");
-			int choice = selectOption("Options:", options, "Skip adding to shelf");
-			if (choice == 1) {
-				System.out.print("Enter new shelf name: ");
-				String newShelfName = scanner.nextLine();
-				bookStorage.addShelf(newShelfName);
-				bookStorage.addBookToShelf(newShelfName, newBook);
-				System.out.println("Book added to new shelf '" + newShelfName + "'.");
-			} else {
-				System.out.println("Book remains in library only.");
-			}
-			pressEnterToContinue();
+			// User selected an existing shelf.
+			String selectedShelf = options.get(choice - 1);
+			bookStorage.addBookToShelf(selectedShelf, newBook);
+			System.out.println("Book added to shelf '" + selectedShelf + "'.");
 		}
+		pressEnterToContinue();
+	}
+
+	/**
+	 * Helper function that prompts the user for a new shelf name, creates the
+	 * shelf, and adds the given book to it.
+	 */
+	private void createShelfAndAddBook(Book newBook) {
+		System.out.print("Enter new shelf name: ");
+		String newShelfName = scanner.nextLine();
+		bookStorage.addShelf(newShelfName);
+		bookStorage.addBookToShelf(newShelfName, newBook);
+		System.out.println("Book added to new shelf '" + newShelfName + "'.");
 	}
 
 	/* ========================== DISPLAY BOOK DETAILS ========================== */

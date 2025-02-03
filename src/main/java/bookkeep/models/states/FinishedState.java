@@ -4,8 +4,8 @@ import java.time.Duration;
 import java.time.Instant;
 
 import bookkeep.enums.EventType;
-import bookkeep.models.BookEvent;
 import bookkeep.models.OwnedBook;
+import bookkeep.models.history.BookEvent;
 
 public class FinishedState extends ReadingState {
 

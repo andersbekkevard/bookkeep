@@ -6,8 +6,6 @@ bookkeep\enums\EventType.class
 bookkeep\models\Book.class
 bookkeep\models\states\ReadingState.class
 bookkeep\app\Main.class
-bookkeep\models\BookHistory.class
 bookkeep\models\states\FinishedState.class
 bookkeep\models\states\NotStartedState.class
 bookkeep\models\OwnedBook.class
-bookkeep\models\BookEvent.class
