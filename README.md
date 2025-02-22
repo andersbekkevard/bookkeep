@@ -11,16 +11,16 @@
 - **Book Details:** Includes pages, author info, genre, and more.
 - **Book Status:**
   - Owned: Physical/Digital, Read/Not Read.
-  - Track reading progress or ratings. (NOT IN UI)
+  - Track reading progress or ratings.
   - Optional: Physical location tracking (e.g., loan status). (NOT IN UI)
-- **History:** Keep logs of reading updates, ratings, and comments. (NOT IN UI)
+- **History:** Keep logs of reading updates, ratings, and comments.
 - **Quotes:** Store memorable quotes from books. (NOT IN UI)
 - **Statistics:** Track overall reading performance and generate insights. (NOT IN UI)
 
 ### Advanced Features
 
 - Custom shelves for personalized categorization.
-- Time tracking for book completion. (NOT IMPLEMENTED)
+- Time tracking for book completion.
 - Object serialization file storage. (Future JSON-based/SQL/Firebase).  
 - Advanced search and filtering capabilities across book attributes.
 
