@@ -69,4 +69,8 @@ public class BookBuilder {
 		validateCommonFields();
 		return new WishlistBook(title, authorName, publicationYear, pageCount, genre, price);
 	}
+
+	public static void main(String[] args) {
+		OwnedBook book = new BookBuilder().withAuthorName("Name").withFormat(BookFormat.PHYSICAL).buildOwnedBook();
+	}
 }

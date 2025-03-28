@@ -21,7 +21,6 @@ public class LibraryMenu {
 
 	/* ================================ CONSTANTS =============================== */
 	private static final String RETURN_LABEL = "Return";
-	private static final String EXIT_LABEL = "Exit";
 	private static final String PRESS_ENTER_MSG = "Press enter to continue...";
 	private static final String NO_BOOKS_MSG = "No books available.";
 	private static final String NO_SHELVES_MSG = "No shelves available. Please add a shelf first.";
@@ -80,6 +79,21 @@ public class LibraryMenu {
 		}
 	}
 
+	private boolean getYesOrNo(String header) {
+		System.out.print(header);
+		System.out.println(" (y/n)");
+		while (true) {
+			String answer = scanner.nextLine();
+			if (answer.toLowerCase().equals("y")) {
+				return true;
+			} else if (answer.toLowerCase().equals("n")) {
+				return false;
+			}
+			System.out.println("Try again. (y/n)");
+		}
+
+	}
+
 	/**
 	 * Displays a menu with the given header and list of options.
 	 * Option 0 is always reserved for the provided returnLabel.
@@ -89,13 +103,13 @@ public class LibraryMenu {
 	 * @param returnLabel The label for option 0.
 	 * @return The user's numeric selection.
 	 */
-	private int selectOption(String header, List<String> options, String returnLabel) {
+	private int selectOption(String header, List<String> options) {
 		clearScreen();
 		System.out.println(header);
 		for (int i = 0; i < options.size(); i++) {
 			System.out.println((i + 1) + ". " + options.get(i));
 		}
-		System.out.println("0. " + returnLabel);
+		System.out.println("0. " + RETURN_LABEL);
 		return getChoice(0, options.size());
 	}
 
@@ -166,7 +180,7 @@ public class LibraryMenu {
 		mainOptions.add("Library Persistence");
 
 		while (running) {
-			int choice = selectOption("===== Library Main Menu =====", mainOptions, EXIT_LABEL);
+			int choice = selectOption("===== Library Main Menu =====", mainOptions);
 			switch (choice) {
 				case 1 -> booksFeaturesMenu();
 				case 2 -> shelfManagementMenu();
@@ -192,7 +206,7 @@ public class LibraryMenu {
 		options.add("Show Books by Year Interval");
 
 		while (inBooksMenu) {
-			int choice = selectOption("===== Books Features Menu =====", options, "Return to Main Menu");
+			int choice = selectOption("===== Books Features Menu =====", options);
 			switch (choice) {
 				case 1 -> listBooksAndSelect("--- All Books in Library ---", bookStorage.getAllBooks());
 				case 2 -> showBooksByAuthor();
@@ -247,7 +261,7 @@ public class LibraryMenu {
 		options.add("Add Shelf");
 
 		while (inShelfMenu) {
-			int choice = selectOption("===== Shelf Management Menu =====", options, "Return to Main Menu");
+			int choice = selectOption("===== Shelf Management Menu =====", options);
 			switch (choice) {
 				case 1 -> selectShelf();
 				case 2 -> addShelf();
@@ -264,7 +278,7 @@ public class LibraryMenu {
 			pressEnterToContinue();
 			return;
 		}
-		int choice = selectOption("Select a shelf:", shelves, "Return to Shelf Management Menu");
+		int choice = selectOption("Select a shelf:", shelves);
 		if (choice == 0) {
 			return;
 		}
@@ -281,7 +295,7 @@ public class LibraryMenu {
 		options.add("View Books in Shelf");
 
 		while (inSubMenu) {
-			int choice = selectOption("=== Shelf: " + shelfName + " ===", options, "Return to Shelf Management Menu");
+			int choice = selectOption("=== Shelf: " + shelfName + " ===", options);
 			switch (choice) {
 				case 1 -> addBookToShelf(shelfName);
 				case 2 -> removeBookFromShelf(shelfName);
@@ -363,7 +377,7 @@ public class LibraryMenu {
 
 		boolean inPersistenceMenu = true;
 		while (inPersistenceMenu) {
-			int choice = selectOption(LIBRARY_PERSISTENCE_HEADER, options, "Return to Main Menu");
+			int choice = selectOption(LIBRARY_PERSISTENCE_HEADER, options);
 			switch (choice) {
 				case 1 -> {
 					try {
@@ -464,7 +478,7 @@ public class LibraryMenu {
 		List<String> options = new ArrayList<>(shelves);
 		options.add("Create new shelf");
 
-		int choice = selectOption("Select a shelf to add the book to:", options, "Skip adding to shelf");
+		int choice = selectOption("Select a shelf to add the book to:", options);
 
 		if (choice == 0) {
 			System.out.println("Book remains in library only.");
@@ -501,7 +515,7 @@ public class LibraryMenu {
 
 		boolean inBookMenu = true;
 		while (inBookMenu) {
-			int choice = selectOption("===== Book Menu =====", options, RETURN_LABEL);
+			int choice = selectOption("===== Book Menu =====", options);
 			switch (choice) {
 				case 1 -> displayBookDetails(book);
 				case 2 -> displayBookHistory(book);
@@ -554,45 +568,122 @@ public class LibraryMenu {
 	 * The logic for interacting with a book is tightly coupled with the book class
 	 * itself, and with its states.
 	 * This is why I try to handle most if the interaction internally in the book,
-	 * and not here in the LibraryMenu class
+	 * and not here in the LibraryMenu class. A try catch block lets only "legal"
+	 * actions be performed
 	 */
 	private void interactWithBook(Book book) {
 		clearScreen();
-		// if (!(book instanceof OwnedBook)) {
-		// System.out.println("Can only interact with owned books at this point");
-		// pressEnterToContinue();
-		// return;
-		// }
-		// // The rest of the method we can assume the book is an OwnedBook
-		// List<String> options = new ArrayList<>();
-		// options.add("Change state");
-		// options.add("Increment pagenumber");
-		// options.add("Comment");
-		// options.add("Quote");
-		// options.add("Review");
+		if (!(book instanceof OwnedBook)) {
+			System.out.println("Can only interact with owned books at this point");
+			pressEnterToContinue();
+			return;
+		}
+		// The rest of the method we can assume the book is an OwnedBook
+		List<String> options = new ArrayList<>();
+		options.add("Change state");
+		options.add("Increment pagenumber");
+		options.add("Comment");
+		options.add("Quote");
+		options.add("Review");
 
-		// boolean inInteractWithBookMenu = true;
-		// while (inInteractWithBookMenu) {
-		// int choice = selectOption("===== Book Menu =====", options, RETURN_LABEL);
-		// switch (choice) {
-		// case 1 -> changeState(Book book);
-		// case 2 -> displayBookHistory(book);
-		// case 3 -> interactWithBook(book);
-		// case 4 -> interactWithBook(book);
-		// case 5 -> interactWithBook(book);
-		// case 0 -> {
-		// inInteractWithBookMenu = false;
-		// }
-		// }
-		// }
-
-		pressEnterToContinue();
+		boolean inInteractWithBookMenu = true;
+		while (inInteractWithBookMenu) {
+			int choice = selectOption("===== Book Menu =====", options);
+			switch (choice) {
+				case 1 -> changeState(book);
+				case 2 -> incrementPageNumber(book);
+				case 3 -> comment(book);
+				case 4 -> writeQuote(book);
+				case 5 -> review(book);
+				case 0 -> inInteractWithBookMenu = false;
+			}
+			pressEnterToContinue();
+		}
 	}
 
-	// public void changeState(Book book){
-	// try {
-	// book.
-	// } catch (Exception e) {
-	// }
-	// }
+	public void changeState(Book book) {
+		clearScreen();
+		System.out.println("Current state is: " + book.getStateName());
+		boolean wantsToChangeState = getYesOrNo("Are you sure?");
+		if (wantsToChangeState) {
+			book.changeState();
+			System.out.println("State changed");
+		} else {
+			System.out.println("State remains unchanged");
+		}
+	}
+
+	public void incrementPageNumber(Book book) {
+		clearScreen();
+		System.out.println("Current page = " + book.getPageNumber() + "/" + book.getPageCount());
+		System.out.println("Increment Page:");
+		int choice = getChoice(0, 200);
+		try {
+			book.incrementPageNumber(choice);
+			System.out.println("Page Number incremented");
+		} catch (IllegalArgumentException e) {
+			System.out.println("Cannot increment that far");
+		} catch (Exception e) {
+			System.out.println("Cannot increment page number in current state");
+		}
+	}
+
+	public void comment(Book book) {
+		clearScreen();
+		System.out.println("Write comment:");
+		String comment = scanner.nextLine();
+		boolean wantsToKeepComment = getYesOrNo("Are you sure?");
+
+		try {
+			if (wantsToKeepComment) {
+				book.addComment(comment);
+				System.out.println("Comment added successfully");
+			}
+
+		} catch (Exception e) {
+			System.out.println("Cannot comment in current state");
+		}
+	}
+
+	public void writeQuote(Book book) {
+		clearScreen();
+		System.out.println("Write quote:");
+		String quote = scanner.nextLine();
+		System.out.println("On page number:");
+		int pageNumber = getChoice(0, book.getPageCount());
+		boolean wantsToKeepQuote = getYesOrNo("Are you sure you want to add this quote?");
+
+		try {
+			if (wantsToKeepQuote) {
+				book.addQuote(quote, pageNumber);
+				System.out.println("Quote added successfully");
+			}
+
+		} catch (Exception e) {
+			System.out.println("Cannot comment in current state");
+		}
+	}
+
+	public void review(Book book) {
+		int MIN_RATING = 1;
+		int MAX_RATING = 5;
+
+		clearScreen();
+
+		System.out.println("Write review:");
+		String reviewText = scanner.nextLine();
+		System.out.println("Rating (out of five stars):");
+		int rating = getChoice(MIN_RATING, MAX_RATING);
+		boolean wantsToAddReview = getYesOrNo("Are you sure you want to add this review?");
+
+		try {
+			if (wantsToAddReview) {
+				book.review(reviewText, rating);
+				System.out.println("Rating performed successfully");
+			}
+
+		} catch (Exception e) {
+			System.out.println("Cannot rate in current state");
+		}
+	}
 }

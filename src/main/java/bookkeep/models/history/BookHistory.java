@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import bookkeep.enums.EventType;
 
@@ -69,7 +68,7 @@ public class BookHistory implements Serializable {
 	public List<BookEvent> gatherSubset(Predicate<BookEvent> predicate) {
 		return listOfEvents.stream()
 				.filter(predicate)
-				.collect(Collectors.toList());
+				.toList();
 	}
 
 	// region Concrete implementations
@@ -96,7 +95,7 @@ public class BookHistory implements Serializable {
 		//
 		if (startedReading == null) {
 			// The book isn't started
-			throw new IllegalCallerException("Has not started reading yet");
+			return Duration.ZERO;
 		}
 		if (finishedReading == null) {
 			// The book is in progress

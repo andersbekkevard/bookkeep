@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import bookkeep.enums.Genre;
 import bookkeep.models.history.BookHistory;
+import bookkeep.models.states.ReadingState;
 
 public abstract class Book implements Serializable {
 	protected String title;
@@ -38,6 +39,14 @@ public abstract class Book implements Serializable {
 	public abstract void review(String reviewText, int rating);
 
 	public abstract void incrementPageNumber(int increment);
+
+	public abstract ReadingState getState();
+
+	public abstract String getStateName();
+
+	public abstract void changeState();
+
+	public abstract int getPageNumber();
 
 	/**
 	 * Getters and setters, Self Evident

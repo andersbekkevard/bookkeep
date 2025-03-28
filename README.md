@@ -42,17 +42,28 @@
 ## Setup Instructions
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/yourusername/bookkeep.git
    cd bookkeep
    ```
+
 2. Build the project using Maven:
+
    ```bash
    mvn clean install
    ```
-3. Run the application:
+
+3. Run the application with terminal UI:
+
    ```bash
    java -cp target/bookkeep.jar bookkeep.app.Main
+   ```
+
+   Run the application with JavaFX UI:
+
+   ```bash
+   mvn javafx:run
    ```
 
 ## Future Enhancements

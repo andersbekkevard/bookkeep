@@ -56,6 +56,7 @@ public class OwnedBook extends Book {
 		this.state = state;
 	}
 
+	@Override
 	public ReadingState getState() {
 		return state;
 	}
@@ -71,20 +72,34 @@ public class OwnedBook extends Book {
 		return state.handleReadingDuration();
 	}
 
+	@Override
 	public void addComment(String comment) {
 		state.handleComment(comment);
 	}
 
+	@Override
 	public void addQuote(String quote, int quotePageNumber) {
 		state.handleQuote(quote, quotePageNumber);
 	}
 
+	@Override
 	public void review(String reviewText, int rating) {
 		state.handleReview(reviewText, rating);
 	}
 
+	@Override
 	public void incrementPageNumber(int increment) {
 		state.handleIncrementPageNumber(increment);
+	}
+
+	@Override
+	public void changeState() {
+		state.changeState();
+	}
+
+	@Override
+	public String getStateName() {
+		return state.getStateName();
 	}
 
 }

@@ -28,4 +28,6 @@ public abstract class ReadingState implements Serializable {
 	public abstract Duration handleReadingDuration();
 
 	public abstract void handleIncrementPageNumber(int increment);
+
+	public abstract void changeState();
 }

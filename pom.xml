@@ -24,6 +24,17 @@
             <version>5.7.0</version>
             <scope>test</scope>
         </dependency>
+        <!-- JavaFX modules -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>21</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>21</version>
+        </dependency>
     </dependencies>
 
     <!-- Build Configurations -->
@@ -50,26 +61,23 @@
                 </configuration>
             </plugin>
 
-            <!-- Javadoc Plugin (For Documentation) -->
-
+            <!-- JavaFX Maven Plugin -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.5.0</version>
-                <configuration>
-                    <destDir>docs/javadoc</destDir> <!-- Store documentation outside target folder -->
-                    <show>protected</show> <!-- Include protected methods and fields -->
-                    <source>23</source> <!-- Ensure compatibility with Java 23 -->
-                </configuration>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.8</version>
                 <executions>
                     <execution>
-                        <phase>package</phase> <!-- Generate Javadoc during the package phase -->
                         <goals>
-                            <goal>javadoc</goal>
+                            <goal>run</goal>
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <mainClass>bookkeep.fxui.App</mainClass>
+                </configuration>
             </plugin>
+
         </plugins>
     </build>
 </project>

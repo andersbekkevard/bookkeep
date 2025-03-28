@@ -1,1 +1,9 @@
+bookkeep\models\states\FinishedStateTest.class
+bookkeep\ui\LibraryMenuTest.class
+bookkeep\models\history\BookHistoryTest.class
+bookkeep\models\BookBuilderTest.class
+bookkeep\models\OwnedBookTest.class
+bookkeep\models\states\NotStartedStateTest.class
 bookkeep\general\JUnitSetupTest.class
+bookkeep\models\history\BookEventTest.class
+bookkeep\models\states\InProgressStateTest.class

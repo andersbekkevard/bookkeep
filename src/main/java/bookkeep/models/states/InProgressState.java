@@ -63,4 +63,9 @@ public class InProgressState extends ReadingState {
 		book.setPageNumber(newPageNumber);
 	}
 
+	@Override
+	public void changeState() {
+		stopReading();
+	}
+
 }

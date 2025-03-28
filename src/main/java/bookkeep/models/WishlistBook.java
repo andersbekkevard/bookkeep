@@ -2,6 +2,7 @@ package bookkeep.models;
 
 import bookkeep.enums.Genre;
 import bookkeep.models.history.BookHistory;
+import bookkeep.models.states.ReadingState;
 
 public class WishlistBook extends Book {
 	private int price;
@@ -54,6 +55,26 @@ public class WishlistBook extends Book {
 	public void incrementPageNumber(int increment) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Unimplemented method 'incrementPageNumber'");
+	}
+
+	@Override
+	public ReadingState getState() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	public String getStateName() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	public void changeState() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	public int getPageNumber() {
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 }

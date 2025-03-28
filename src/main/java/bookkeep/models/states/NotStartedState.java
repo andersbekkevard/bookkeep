@@ -54,4 +54,9 @@ public class NotStartedState extends ReadingState {
 		throw new UnsupportedOperationException("Cannot Increment page number of a book in NotStartedState");
 	}
 
+	@Override
+	public void changeState() {
+		startReading();
+	}
+
 }

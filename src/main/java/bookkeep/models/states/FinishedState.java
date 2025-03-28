@@ -68,4 +68,9 @@ public class FinishedState extends ReadingState {
 	public void handleIncrementPageNumber(int increment) {
 		throw new UnsupportedOperationException("Cannot increment pagenumber of a finished book");
 	}
+
+	@Override
+	public void changeState() {
+		// Do nothing
+	}
 }
