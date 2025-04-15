@@ -53,7 +53,7 @@ public class FileSaver {
 		BookStorage storage = saver.load();
 		System.out.println(storage);
 
-		storage.addBook(makeBookFromTitle.apply("NEW_BOOK"));
+		storage.addBook(makeBookFromTitle.apply("xxx"));
 		saver.save(storage);
 
 	}

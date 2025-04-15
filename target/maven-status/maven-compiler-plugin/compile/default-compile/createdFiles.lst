@@ -1,8 +1,10 @@
+bookkeep\fxui\Controller$1$1.class
 bookkeep\models\states\InProgressState.class
 bookkeep\models\WishlistBook.class
 bookkeep\models\history\BookHistory.class
 bookkeep\enums\BookFormat.class
 bookkeep\models\collections\BookShelf.class
+bookkeep\persistance\FileSaver.class
 bookkeep\ui\LibraryMenu.class
 bookkeep\enums\Genre.class
 bookkeep\fxui\App.class
@@ -11,6 +13,7 @@ bookkeep\models\Book.class
 bookkeep\models\history\BookEvent.class
 bookkeep\models\states\ReadingState.class
 bookkeep\app\Main.class
+bookkeep\fxui\Controller$1.class
 bookkeep\models\states\FinishedState.class
 bookkeep\models\collections\BookStorage.class
 bookkeep\persistance\LibrarySerializer.class

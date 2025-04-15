@@ -1,7 +1,8 @@
-Julius Caesar
-Macbeth
-King Lear
-Othello
-Romeo and Juliet
 Hamlet
+xxx
+Julius Caesar
+Romeo and Juliet
 NEW_BOOK
+King Lear
+Macbeth
+Othello

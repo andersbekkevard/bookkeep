@@ -63,6 +63,7 @@ public class OwnedBook extends Book {
 
 	@Override
 	public BookHistory getHistory() {
+
 		return history;
 	}
 

@@ -1,7 +1,14 @@
 package bookkeep.fxui;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import bookkeep.enums.BookFormat;
-import bookkeep.enums.EventType;
 import bookkeep.enums.Genre;
 import bookkeep.models.Book;
 import bookkeep.models.BookBuilder;
@@ -13,27 +20,13 @@ import bookkeep.models.states.FinishedState;
 import bookkeep.models.states.InProgressState;
 import bookkeep.models.states.NotStartedState;
 import bookkeep.persistance.LibrarySerializer;
-
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.util.Callback;
-
-import java.io.IOException;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class Controller {
 
