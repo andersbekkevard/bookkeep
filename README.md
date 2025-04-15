@@ -26,7 +26,7 @@
 
 ## Tech Stack
 
-- **Java 23**: Core application logic.
+- **Java 21**: Core application logic.
 - **JUnit 5.7**: Testing framework.
 - **(PLanned): JSON**: Data persistence (or SQL/Firebase).
 
