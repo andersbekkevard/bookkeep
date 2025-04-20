@@ -26,7 +26,7 @@
 
 ## Tech Stack
 
-- **Java 23**: Core application logic.
+- **Java 21**: Core application logic.
 - **JUnit 5.7**: Testing framework.
 - **(PLanned): JSON**: Data persistence (or SQL/Firebase).
 
@@ -72,3 +72,6 @@
 - Web integration and multiplayer functionality.
 - Reading suggestions using LLMs.
 - Gamification: Reading goals, achievements, reminders.
+
+## LLM Usage
+JUnit testing and user interface logic is written by LLMs.
