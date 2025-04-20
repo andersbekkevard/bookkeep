@@ -17,7 +17,7 @@
   - Track reading progress or ratings.
   - Optional: Physical location tracking (e.g., loan status). (NOT IN UI)
 - **History:** Keep logs of reading updates, ratings, and comments.
-- **Quotes:** Store memorable quotes from books. (NOT IN UI)
+- **Quotes:** Store memorable quotes from books.
 - **Statistics:** Track overall reading performance and generate insights. (NOT IN UI)
 
 ### Advanced Features
