@@ -72,3 +72,6 @@
 - Web integration and multiplayer functionality.
 - Reading suggestions using LLMs.
 - Gamification: Reading goals, achievements, reminders.
+
+## AI Usage
+JUnit testing and user interface logic is written by AI.
