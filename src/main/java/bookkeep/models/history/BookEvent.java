@@ -41,40 +41,21 @@ public class BookEvent implements Serializable {
 	private static final int HIGHEST_RATING = 5;
 
 	/**
-	 * Constructor 1 for Non-Comment-Types
+	 * Private constructor used by BookEventBuilder
 	 */
-	public BookEvent(EventType type) {
-		if (!(type == EventType.STARTED_READING) && !(type == EventType.FINISHED_READING)) {
-			throw new IllegalArgumentException(
-					"Event without String or Int has to be Start or Stop");
-		}
-		this.timestamp = Instant.now();
-		this.type = type;
+	BookEvent(BookEventBuilder builder) {
+		this.timestamp = builder.getTimestamp();
+		this.type = builder.getType();
+		this.text = builder.getText();
+		this.pageNumber = builder.getPageNumber();
+		this.rating = builder.getRating();
 	}
 
 	/**
-	 * Constructor 2 for Comments, Quotes or Rating
+	 * Creates a new BookEventBuilder for fluent construction
 	 */
-	public BookEvent(EventType type, String text, int number) {
-		if ((type == EventType.STARTED_READING) || (type == EventType.FINISHED_READING)) {
-			throw new IllegalArgumentException("Cant start or stop with input String and int");
-		}
-
-		this.timestamp = Instant.now();
-		this.type = type;
-		this.text = text;
-
-		// The number might be intended as either a pageNumber or a rating
-		if (type != EventType.REVIEW) {
-			this.pageNumber = number;
-			return;
-		}
-
-		// At this point we know the event is a review
-		if (LOWEST_RATING > number || number > HIGHEST_RATING) {
-			throw new IllegalArgumentException("Rating has to be between 0 and 5");
-		}
-		this.rating = number;
+	public static BookEventBuilder builder() {
+		throw new UnsupportedOperationException("Use specific factory methods like BookEventBuilder.forComment() instead");
 	}
 
 	public Instant getTimestamp() {
@@ -87,6 +68,14 @@ public class BookEvent implements Serializable {
 
 	public String getText() {
 		return text;
+	}
+
+	public int getPageNumber() {
+		return pageNumber;
+	}
+
+	public int getRating() {
+		return rating;
 	}
 
 	@Override

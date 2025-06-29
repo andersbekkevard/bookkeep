@@ -6,6 +6,7 @@ import java.time.Instant;
 import bookkeep.enums.EventType;
 import bookkeep.models.OwnedBook;
 import bookkeep.models.history.BookEvent;
+import bookkeep.models.history.BookEventBuilder;
 
 public class FinishedState extends ReadingState {
 
@@ -31,13 +32,13 @@ public class FinishedState extends ReadingState {
 	@Override
 	public void handleComment(String comment) {
 		// A comment in FinishedState becomes an afterthought
-		BookEvent afterThoughtEvent = new BookEvent(EventType.AFTERTHOUGHT, comment, book.getPageNumber());
+		BookEvent afterThoughtEvent = BookEventBuilder.forAfterthought(comment).atPage(book.getPageNumber()).build();
 		book.getHistory().addEvent(afterThoughtEvent);
 	}
 
 	@Override
 	public void handleQuote(String quote, int quotePageNumber) {
-		BookEvent quoteEvent = new BookEvent(EventType.QUOTE, quote, quotePageNumber);
+		BookEvent quoteEvent = BookEventBuilder.forQuote(quote).atPage(quotePageNumber).build();
 		book.getHistory().addEvent(quoteEvent);
 	}
 
@@ -49,7 +50,7 @@ public class FinishedState extends ReadingState {
 			reviewText = "_OVERRIDE_" + reviewText + "_OVERRIDE_";
 		}
 
-		BookEvent reviewEvent = new BookEvent(EventType.REVIEW, reviewText, rating);
+		BookEvent reviewEvent = BookEventBuilder.forReview(reviewText, rating).build();
 		book.getHistory().setReview(reviewEvent);
 	}
 

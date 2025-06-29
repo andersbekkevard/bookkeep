@@ -6,6 +6,7 @@ import java.time.Instant;
 import bookkeep.enums.EventType;
 import bookkeep.models.OwnedBook;
 import bookkeep.models.history.BookEvent;
+import bookkeep.models.history.BookEventBuilder;
 
 public class InProgressState extends ReadingState {
 
@@ -21,7 +22,7 @@ public class InProgressState extends ReadingState {
 	@Override
 	public void stopReading() {
 		book.setState(new FinishedState(book));
-		BookEvent finishedReadingEvent = new BookEvent(EventType.FINISHED_READING);
+		BookEvent finishedReadingEvent = BookEventBuilder.forFinishedReading().build();
 		book.getHistory().addEvent(finishedReadingEvent);
 	}
 
@@ -32,14 +33,14 @@ public class InProgressState extends ReadingState {
 
 	@Override
 	public void handleComment(String comment) {
-		BookEvent commentEvent = new BookEvent(EventType.COMMENT, comment, book.getPageNumber());
+		BookEvent commentEvent = BookEventBuilder.forComment(comment).atPage(book.getPageNumber()).build();
 
 		book.getHistory().addEvent(commentEvent);
 	}
 
 	@Override
 	public void handleQuote(String quote, int quotePageNumber) {
-		BookEvent quoteEvent = new BookEvent(EventType.QUOTE, quote, quotePageNumber);
+		BookEvent quoteEvent = BookEventBuilder.forQuote(quote).atPage(quotePageNumber).build();
 		book.getHistory().addEvent(quoteEvent);
 	}
 

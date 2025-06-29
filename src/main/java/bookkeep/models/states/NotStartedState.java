@@ -5,6 +5,7 @@ import java.time.Duration;
 import bookkeep.enums.EventType;
 import bookkeep.models.OwnedBook;
 import bookkeep.models.history.BookEvent;
+import bookkeep.models.history.BookEventBuilder;
 
 public class NotStartedState extends ReadingState {
 
@@ -15,7 +16,7 @@ public class NotStartedState extends ReadingState {
 	@Override
 	public void startReading() {
 		book.setState(new InProgressState(book));
-		BookEvent startedReadingEvent = new BookEvent(EventType.STARTED_READING);
+		BookEvent startedReadingEvent = BookEventBuilder.forStartedReading().build();
 		book.getHistory().addEvent(startedReadingEvent);
 	}
 

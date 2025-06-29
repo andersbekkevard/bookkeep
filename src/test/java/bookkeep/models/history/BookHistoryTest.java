@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import bookkeep.enums.EventType;
+import bookkeep.models.history.BookEventBuilder;
 
 class BookHistoryTest {
 
@@ -36,7 +37,7 @@ class BookHistoryTest {
 
 	@Test
 	void testAddCommentEvent() {
-		BookEvent commentEvent = new BookEvent(EventType.COMMENT, "Great book", 10);
+		BookEvent commentEvent = BookEventBuilder.forComment("Great book").atPage(10).build();
 		history.addEvent(commentEvent);
 		List<BookEvent> events = history.getListOfEvents();
 		assertEquals(1, events.size(), "Should have one event after adding a comment");
@@ -45,7 +46,7 @@ class BookHistoryTest {
 
 	@Test
 	void testAddQuoteEvent() {
-		BookEvent quoteEvent = new BookEvent(EventType.QUOTE, "Inspiring quote", 20);
+		BookEvent quoteEvent = BookEventBuilder.forQuote("Inspiring quote").atPage(20).build();
 		history.addEvent(quoteEvent);
 		List<BookEvent> events = history.getListOfEvents();
 		assertEquals(1, events.size(), "Should have one event after adding a quote");
@@ -54,7 +55,7 @@ class BookHistoryTest {
 
 	@Test
 	void testAddAfterThoughtEvent() {
-		BookEvent afterThoughtEvent = new BookEvent(EventType.AFTERTHOUGHT, "Late thought", 30);
+		BookEvent afterThoughtEvent = BookEventBuilder.forAfterthought("Late thought").atPage(30).build();
 		history.addEvent(afterThoughtEvent);
 		List<BookEvent> events = history.getListOfEvents();
 		assertEquals(1, events.size(), "Should have one event after adding an afterthought");
@@ -63,21 +64,21 @@ class BookHistoryTest {
 
 	@Test
 	void testAddStartedReadingEvent() {
-		BookEvent startedEvent = new BookEvent(EventType.STARTED_READING);
+		BookEvent startedEvent = BookEventBuilder.forStartedReading().build();
 		history.addEvent(startedEvent);
 		assertEquals(startedEvent, history.getStartedReading(), "Started reading event should be set");
 	}
 
 	@Test
 	void testAddFinishedReadingEvent() {
-		BookEvent finishedEvent = new BookEvent(EventType.FINISHED_READING);
+		BookEvent finishedEvent = BookEventBuilder.forFinishedReading().build();
 		history.addEvent(finishedEvent);
 		assertEquals(finishedEvent, history.getFinishedReading(), "Finished reading event should be set");
 	}
 
 	@Test
 	void testAddReviewEventThrowsException() {
-		BookEvent reviewEvent = new BookEvent(EventType.REVIEW, "Review text", 4);
+		BookEvent reviewEvent = BookEventBuilder.forReview("Review text", 4).build();
 		Exception exception = assertThrows(IllegalArgumentException.class, () -> history.addEvent(reviewEvent));
 		assertTrue(exception.getMessage().contains("Reviews should not be added through addEvent Method"),
 				"Adding a review event through addEvent should throw an exception");
@@ -87,9 +88,9 @@ class BookHistoryTest {
 
 	@Test
 	void testGetCommentsSubset() {
-		BookEvent comment1 = new BookEvent(EventType.COMMENT, "Comment one", 5);
-		BookEvent comment2 = new BookEvent(EventType.COMMENT, "Comment two", 10);
-		BookEvent quote = new BookEvent(EventType.QUOTE, "A quote", 15);
+		BookEvent comment1 = BookEventBuilder.forComment("Comment one").atPage(5).build();
+		BookEvent comment2 = BookEventBuilder.forComment("Comment two").atPage(10).build();
+		BookEvent quote = BookEventBuilder.forQuote("A quote").atPage(15).build();
 		history.addEvent(comment1);
 		history.addEvent(quote);
 		history.addEvent(comment2);
@@ -102,8 +103,8 @@ class BookHistoryTest {
 
 	@Test
 	void testGetAfterThoughtsSubset() {
-		BookEvent afterThought = new BookEvent(EventType.AFTERTHOUGHT, "Afterthought", 20);
-		BookEvent comment = new BookEvent(EventType.COMMENT, "Comment", 5);
+		BookEvent afterThought = BookEventBuilder.forAfterthought("Afterthought").atPage(20).build();
+		BookEvent comment = BookEventBuilder.forComment("Comment").atPage(5).build();
 		history.addEvent(afterThought);
 		history.addEvent(comment);
 
@@ -114,9 +115,9 @@ class BookHistoryTest {
 
 	@Test
 	void testGetQuotesSubset() {
-		BookEvent quote1 = new BookEvent(EventType.QUOTE, "Quote one", 25);
-		BookEvent quote2 = new BookEvent(EventType.QUOTE, "Quote two", 30);
-		BookEvent comment = new BookEvent(EventType.COMMENT, "Comment", 5);
+		BookEvent quote1 = BookEventBuilder.forQuote("Quote one").atPage(25).build();
+		BookEvent quote2 = BookEventBuilder.forQuote("Quote two").atPage(30).build();
+		BookEvent comment = BookEventBuilder.forComment("Comment").atPage(5).build();
 		history.addEvent(quote1);
 		history.addEvent(comment);
 		history.addEvent(quote2);
@@ -132,11 +133,11 @@ class BookHistoryTest {
 	@Test
 	void testSortOrdersEventsChronologically() throws InterruptedException {
 		// Create events with a slight delay between them.
-		BookEvent event1 = new BookEvent(EventType.COMMENT, "First", 5);
+		BookEvent event1 = BookEventBuilder.forComment("First").atPage(5).build();
 		Thread.sleep(10);
-		BookEvent event2 = new BookEvent(EventType.QUOTE, "Second", 10);
+		BookEvent event2 = BookEventBuilder.forQuote("Second").atPage(10).build();
 		Thread.sleep(10);
-		BookEvent event3 = new BookEvent(EventType.AFTERTHOUGHT, "Third", 15);
+		BookEvent event3 = BookEventBuilder.forAfterthought("Third").atPage(15).build();
 
 		// Add them in reverse order.
 		history.addEvent(event3);
@@ -156,7 +157,7 @@ class BookHistoryTest {
 
 	@Test
 	void testReviewGetterAndSetter() {
-		BookEvent reviewEvent = new BookEvent(EventType.REVIEW, "Excellent!", 5);
+		BookEvent reviewEvent = BookEventBuilder.forReview("Excellent!", 5).build();
 		history.setReview(reviewEvent);
 		assertTrue(history.hasReview(), "hasReview() should return true after setting a review");
 		assertEquals(reviewEvent, history.getReview(), "getReview() should return the review event that was set");
@@ -165,7 +166,7 @@ class BookHistoryTest {
 	/* ============================== TOSTRING TEST ============================= */
 	@Test
 	void testToStringReturnsListContents() {
-		BookEvent commentEvent = new BookEvent(EventType.COMMENT, "Test comment", 10);
+		BookEvent commentEvent = BookEventBuilder.forComment("Test comment").atPage(10).build();
 		history.addEvent(commentEvent);
 		String toStringOutput = history.toString();
 		assertTrue(toStringOutput.contains("Test comment"), "toString() should contain the comment text");
